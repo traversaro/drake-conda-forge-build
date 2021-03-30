@@ -46,10 +46,11 @@ jobs:
     - name: Build
       shell: bash -l {0}
       run: |
+        cd drake
         bazel build //tools/install/dummy:install
 
     - name: Install
       shell: bash -l {0}
       run: |
-        cd build
+        cd drake
         bazel run //tools/install/dummy:install -- ${GITHUB_WORKSPACE}/install

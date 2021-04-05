@@ -34,7 +34,7 @@ jobs:
         # Compilation related dependencies
         mamba install bazel compilers make ninja pkg-config
         # Actual dependencies
-        mamba install spdlog
+        mamba install spdlog eigen
 
     - name: Download drake
       shell: bash -l {0}

@@ -34,23 +34,35 @@ jobs:
         # Compilation related dependencies
         mamba install bazel compilers make ninja pkg-config
         # Actual dependencies
-        mamba install spdlog eigen
+        mamba install spdlog eigen python numpy fcl libsdformat10 libignition-math6 tinyxml2 yaml-cpp suitesparse ipopt
 
     - name: Download drake
       shell: bash -l {0}
       run: |
-        git clone https://github.com/RobotLocomotion/drake
+        git clone https://github.com/traversaro/drake
         cd drake
-        git checkout v0.28.0
+        git checkout drake-conda
 
+    - name: Test common
+      shell: bash -l {0}
+      run: |
+        cd drake/common
+        bazel test  --define=NO_SCS=ON --define=NO_DREAL=ON --define=NO_NLOPT=ON --define=NO_CSDP=ON ...
+    
+    - name: Test math
+      shell: bash -l {0}
+      run: |
+        cd drake/math
+        bazel test  --define=NO_SCS=ON --define=NO_DREAL=ON --define=NO_NLOPT=ON --define=NO_CSDP=ON ...
+    
     - name: Build
       shell: bash -l {0}
       run: |
         cd drake
-        bazel build //:install
+        bazel build --define=NO_SCS=ON --define=NO_DREAL=ON --define=NO_NLOPT=ON --define=NO_CSDP=ON //:install
 
     - name: Install
       shell: bash -l {0}
       run: |
         cd drake
-        bazel run //:install -- ${GITHUB_WORKSPACE}/install
+        bazel run --define=NO_SCS=ON --define=NO_DREAL=ON --define=NO_NLOPT=ON --define=NO_CSDP=ON //:install -- ${GITHUB_WORKSPACE}/install

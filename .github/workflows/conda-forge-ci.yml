@@ -47,22 +47,26 @@ jobs:
       shell: bash -l {0}
       run: |
         cd drake/common
-        bazel test  --define=NO_SCS=ON --define=NO_DREAL=ON --define=NO_NLOPT=ON --define=NO_CSDP=ON ...
+        export BAZEL_CXXOPTS=-std=c++17
+        bazel test -s --define=NO_SCS=ON --define=NO_DREAL=ON --define=NO_NLOPT=ON --define=NO_CSDP=ON ...
     
     - name: Test math
       shell: bash -l {0}
       run: |
         cd drake/math
-        bazel test  --define=NO_SCS=ON --define=NO_DREAL=ON --define=NO_NLOPT=ON --define=NO_CSDP=ON ...
+        export BAZEL_CXXOPTS=-std=c++17
+        bazel test -s  --define=NO_SCS=ON --define=NO_DREAL=ON --define=NO_NLOPT=ON --define=NO_CSDP=ON ...
     
     - name: Build
       shell: bash -l {0}
       run: |
         cd drake
-        bazel build --define=NO_SCS=ON --define=NO_DREAL=ON --define=NO_NLOPT=ON --define=NO_CSDP=ON //:install
+        export BAZEL_CXXOPTS=-std=c++17
+        bazel build -s --define=NO_SCS=ON --define=NO_DREAL=ON --define=NO_NLOPT=ON --define=NO_CSDP=ON //:install
 
     - name: Install
       shell: bash -l {0}
       run: |
         cd drake
-        bazel run --define=NO_SCS=ON --define=NO_DREAL=ON --define=NO_NLOPT=ON --define=NO_CSDP=ON //:install -- ${GITHUB_WORKSPACE}/install
+        export BAZEL_CXXOPTS=-std=c++17
+        bazel run -s --define=NO_SCS=ON --define=NO_DREAL=ON --define=NO_NLOPT=ON --define=NO_CSDP=ON //:install -- ${GITHUB_WORKSPACE}/install

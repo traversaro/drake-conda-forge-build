@@ -41,7 +41,7 @@ jobs:
       run: |
         git clone https://github.com/traversaro/drake
         cd drake
-        git checkout drake-conda
+        git checkout conda-fall21
 
     - name: Test common
       shell: bash -l {0}

@@ -5,8 +5,8 @@ on:
   pull_request:
   schedule:
   # * is a special character in YAML so you have to quote this string
-  # Execute a "nightly" build at 2 AM UTC
-  - cron:  '0 2 * * *'
+  # Execute a "monthly" build
+  - cron:  '0 0 1 * *'
   workflow_dispatch:
 
 jobs:

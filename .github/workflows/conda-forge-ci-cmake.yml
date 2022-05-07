@@ -1,0 +1,60 @@
+name: C++ CI Workflow with conda-forge dependencies and CMake build
+
+on:
+  push:
+  pull_request:
+  schedule:
+  # * is a special character in YAML so you have to quote this string
+  # Execute a "monthly" build
+  - cron:  '0 0 1 * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: '[${{ matrix.os }}@${{ matrix.build_type }}@conda]'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        build_type: [Release]
+        os: [ubuntu-20.04]
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: conda-incubator/setup-miniconda@v2
+      with:
+        mamba-version: "*"
+        channels: conda-forge,defaults
+        channel-priority: true
+
+    - name: Dependencies
+      shell: bash -l {0}
+      run: |
+        # Compilation related dependencies
+        mamba install bazel compilers make ninja pkg-config which
+
+        # Actual dependencies
+        mamba install fmt spdlog gflags eigen python numpy fcl libsdformat10 libignition-math6 tinyxml2 yaml-cpp suitesparse ipopt glib
+
+    - name: Download drake
+      shell: bash -l {0}
+      run: |
+        git clone https://github.com/RobotLocomotion/drake
+        cd drake
+        git checkout v1.2.0
+
+    - name: Configure
+      shell: bash -l {0}
+      run: |
+        cd drake
+        mkdir build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_INSTALL_PREFIX=./install -DWITH_USER_EIGEN:BOOL=ON -DWITH_USER_FMT:BOOL=ON -DWITH_USER_SPDLOG:BOOL=ON ..
+
+    - name: Install
+      shell: bash -l {0}
+      run: |
+        cd drake
+        cd build
+        make install
